@@ -11,6 +11,6 @@ RUN mkdir -p /etc/consul/conf.d
 ADD consul.json /etc/consul/consul.json.tpl
 
 ENV CONSUL_HOST consul
-ADD consul.sh /consul.sh
+ADD consul.sh /root/consul.sh
 
-ENTRYPOINT ["/consul.sh"]
+ENTRYPOINT ["/root/consul.sh"]
