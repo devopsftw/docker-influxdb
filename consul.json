@@ -1,0 +1,14 @@
+{
+  "data_dir": "/tmp/consul",
+  "ports" : {
+    "dns" : 53
+  },
+  "service": {
+    "name": "${CONSUL_SERVICE_NAME:-influxdb}",
+    "port": 8086,
+    "check": {
+      "script": "curl -sl -I localhost:8086/ping",
+      "interval": "10s"
+    }
+  }
+}
