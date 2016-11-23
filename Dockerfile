@@ -8,11 +8,9 @@ RUN apk add --no-cache ca-certificates openssl && \
     wget https://github.com/kreuzwerker/envplate/releases/download/v0.0.8/ep-linux -O /usr/local/bin/ep && \
     chmod +x /usr/local/bin/ep && \
     apk del openssl
-COPY consul.json /etc/consul/consul.json.tpl
 
 COPY entry-consul.sh /usr/local/bin
 COPY consul.tpl.json /etc
 
-ENTRYPOINT ["/root/consul.sh"]
 ENTRYPOINT [ "entry-consul.sh" ]
 CMD [ "influxd" ]
