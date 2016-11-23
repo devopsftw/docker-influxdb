@@ -1,16 +1,18 @@
-FROM influxdb:1.0.2-alpine
+FROM influxdb:1.1.0-alpine
 
-RUN apk add --update curl unzip && \
-    rm -rf /var/cache/apk/*
+ENV CONSUL_VERSION 0.7.0
 
-RUN curl https://releases.hashicorp.com/consul/0.6.4/consul_0.6.4_linux_amd64.zip > /tmp/consul.zip && unzip /tmp/consul.zip
-RUN curl -L https://github.com/kreuzwerker/envplate/releases/download/v0.0.8/ep-linux -o /usr/local/bin/ep && chmod +x /usr/local/bin/ep
+RUN apk add --no-cache ca-certificates openssl && \
+    wget https://releases.hashicorp.com/consul/${CONSUL_VERSION}/consul_${CONSUL_VERSION}_linux_amd64.zip && \
+    unzip -d /usr/local/bin consul_${CONSUL_VERSION}_linux_amd64.zip && \
+    wget https://github.com/kreuzwerker/envplate/releases/download/v0.0.8/ep-linux -O /usr/local/bin/ep && \
+    chmod +x /usr/local/bin/ep && \
+    apk del openssl
+COPY consul.json /etc/consul/consul.json.tpl
 
-RUN mv consul /usr/local/bin/
-RUN mkdir -p /etc/consul/conf.d
-ADD consul.json /etc/consul/consul.json.tpl
-
-ENV CONSUL_HOST consul
-ADD consul.sh /root/consul.sh
+COPY entry-consul.sh /usr/local/bin
+COPY consul.tpl.json /etc
 
 ENTRYPOINT ["/root/consul.sh"]
+ENTRYPOINT [ "entry-consul.sh" ]
+CMD [ "influxd" ]
